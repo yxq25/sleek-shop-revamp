@@ -6,6 +6,8 @@ import { Cart } from '@/components/Cart';
 import { ProductFilters } from '@/components/ProductFilters';
 import { ProductCard } from '@/components/ProductCard';
 import { AdminPanel } from '@/components/AdminPanel';
+import { FloatingCartButton } from '@/components/FloatingCartButton';
+import { AdminFooterPanel } from '@/components/AdminFooterPanel';
 import { useAuth } from '@/hooks/useAuth';
 import { useStore } from '@/hooks/useStore';
 import { useCart } from '@/hooks/useCart';
@@ -105,6 +107,11 @@ const Index = () => {
     });
   };
 
+  const handleCartButtonClick = () => {
+    // Función para el botón flotante del carrito
+    console.log('Cart button clicked');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
       <Header 
@@ -112,6 +119,16 @@ const Index = () => {
         storeDescription={store.storeConfig.description}
         onAdminToggle={auth.toggleAdminMode}
         isAdminMode={auth.isAdminMode}
+      />
+
+      <FloatingCartButton 
+        cart={cart.cart}
+        onClick={handleCartButtonClick}
+      />
+
+      <AdminFooterPanel 
+        isAdminMode={auth.isAdminMode}
+        onAdminToggle={auth.toggleAdminMode}
       />
 
       <LoginModal

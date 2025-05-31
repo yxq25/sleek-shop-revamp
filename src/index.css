@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -35,20 +36,17 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Custom colors inspired by the logo */
+    --yellow-brand: 45 93% 66%;
+    --yellow-brand-dark: 45 93% 56%;
   }
 
   .dark {
@@ -98,4 +96,36 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom animations for better UX */
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s infinite;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom yellow colors matching the logo */
+.bg-yellow-brand {
+  background-color: hsl(var(--yellow-brand));
+}
+
+.bg-yellow-brand-dark {
+  background-color: hsl(var(--yellow-brand-dark));
+}
+
+.text-yellow-brand {
+  color: hsl(var(--yellow-brand-dark));
 }
