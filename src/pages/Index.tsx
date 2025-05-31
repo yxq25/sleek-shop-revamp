@@ -22,7 +22,7 @@ const Index = () => {
   const [skillFilter, setSkillFilter] = useState('');
 
   const matchesAgeFilter = (productAge: string, filterAge: string) => {
-    if (!filterAge) return true;
+    if (!filterAge || filterAge === 'all') return true;
     
     const normalizeAge = (age: string) => {
       return age.toLowerCase()
@@ -88,9 +88,9 @@ const Index = () => {
 
       const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           product.description.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesCollection = !collectionFilter || product.collection === collectionFilter;
+      const matchesCollection = !collectionFilter || collectionFilter === 'all' || product.collection === collectionFilter;
       const matchesAge = matchesAgeFilter(product.age, ageFilter);
-      const matchesSkill = !skillFilter || product.skills.some(skill => 
+      const matchesSkill = !skillFilter || skillFilter === 'all' || product.skills.some(skill => 
         skill.toLowerCase().includes(skillFilter.toLowerCase()));
 
       return matchesSearch && matchesCollection && matchesAge && matchesSkill;
