@@ -23,7 +23,7 @@ export default defineConfig(({ mode }) => ({
   build: {
     // Optimizaciones para Cloudflare Pages
     target: 'es2015',
-    minify: 'terser',
+    minify: true, // Usar esbuild (predeterminado) en lugar de terser
     cssMinify: true,
     rollupOptions: {
       output: {
