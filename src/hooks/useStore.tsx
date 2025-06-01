@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Product, Collection, StoreConfig } from '@/types/store';
 
@@ -80,6 +79,15 @@ export const useStore = () => {
     setProducts([...products, { ...product, id: newId }]);
   };
 
+  const addMultipleProducts = (newProducts: Omit<Product, 'id'>[]) => {
+    let currentMaxId = Math.max(...products.map(p => p.id), 0);
+    const productsWithIds = newProducts.map(product => ({
+      ...product,
+      id: ++currentMaxId
+    }));
+    setProducts(prev => [...prev, ...productsWithIds]);
+  };
+
   const updateProduct = (id: number, product: Omit<Product, 'id'>) => {
     setProducts(products.map(p => p.id === id ? { ...product, id } : p));
   };
@@ -128,6 +136,7 @@ export const useStore = () => {
     products,
     updateStoreConfig,
     addProduct,
+    addMultipleProducts,
     updateProduct,
     deleteProduct,
     toggleProductVisibility,

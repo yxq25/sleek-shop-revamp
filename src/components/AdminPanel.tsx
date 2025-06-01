@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,8 +8,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Package, FolderOpen, Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
+import { Settings, Package, FolderOpen, Plus, Edit, Trash2, Eye, EyeOff, FileSpreadsheet } from 'lucide-react';
 import { Product, Collection, StoreConfig } from '@/types/store';
+import { ExcelImporter } from '@/components/ExcelImporter';
 
 interface AdminPanelProps {
   storeConfig: StoreConfig;
@@ -43,6 +43,7 @@ export const AdminPanel = ({
   const [editingCollection, setEditingCollection] = useState<Collection | null>(null);
   const [showProductForm, setShowProductForm] = useState(false);
   const [showCollectionForm, setShowCollectionForm] = useState(false);
+  const [showExcelImporter, setShowExcelImporter] = useState(false);
 
   const [productForm, setProductForm] = useState<Omit<Product, 'id'>>({
     name: '',
@@ -149,6 +150,23 @@ export const AdminPanel = ({
     }
   };
 
+  const handleImportProducts = (importedProducts: Omit<Product, 'id'>[]) => {
+    importedProducts.forEach(product => {
+      onAddProduct(product);
+    });
+    setShowExcelImporter(false);
+  };
+
+  if (showExcelImporter) {
+    return (
+      <ExcelImporter
+        collections={collections}
+        onImportProducts={handleImportProducts}
+        onClose={() => setShowExcelImporter(false)}
+      />
+    );
+  }
+
   return (
     <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
       <CardHeader>
@@ -177,10 +195,19 @@ export const AdminPanel = ({
           <TabsContent value="products" className="space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="text-lg font-semibold">Gestión de Productos</h3>
-              <Button onClick={() => setShowProductForm(true)} className="bg-green-600 hover:bg-green-700">
-                <Plus className="w-4 h-4 mr-2" />
-                Nuevo Producto
-              </Button>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setShowExcelImporter(true)} 
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <FileSpreadsheet className="w-4 h-4 mr-2" />
+                  Importar Excel
+                </Button>
+                <Button onClick={() => setShowProductForm(true)} className="bg-green-600 hover:bg-green-700">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Nuevo Producto
+                </Button>
+              </div>
             </div>
 
             {showProductForm && (
