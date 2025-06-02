@@ -62,7 +62,7 @@ export const ProductFilters = ({
                 <SelectValue placeholder="Todas las colecciones" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas las colecciones</SelectItem>
+                <SelectItem value="all">Todas las colecciones</SelectItem>
                 {collections.map(collection => (
                   <SelectItem key={collection.id} value={collection.name}>
                     {collection.name}
@@ -81,7 +81,7 @@ export const ProductFilters = ({
                 <SelectValue placeholder="Todas las edades" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas las edades</SelectItem>
+                <SelectItem value="all">Todas las edades</SelectItem>
                 {uniqueAges.map(age => (
                   <SelectItem key={age} value={age}>
                     {age}
@@ -100,7 +100,7 @@ export const ProductFilters = ({
                 <SelectValue placeholder="Todas las habilidades" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas las habilidades</SelectItem>
+                <SelectItem value="all">Todas las habilidades</SelectItem>
                 {uniqueSkills.map(skill => (
                   <SelectItem key={skill} value={skill}>
                     {skill}

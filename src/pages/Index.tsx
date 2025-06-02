@@ -19,9 +19,9 @@ const Index = () => {
   const cart = useCart();
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [collectionFilter, setCollectionFilter] = useState('');
-  const [ageFilter, setAgeFilter] = useState('');
-  const [skillFilter, setSkillFilter] = useState('');
+  const [collectionFilter, setCollectionFilter] = useState('all');
+  const [ageFilter, setAgeFilter] = useState('all');
+  const [skillFilter, setSkillFilter] = useState('all');
 
   const matchesAgeFilter = (productAge: string, filterAge: string) => {
     if (!filterAge || filterAge === 'all') return true;
