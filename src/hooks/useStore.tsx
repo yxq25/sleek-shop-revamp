@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Product, Collection, StoreConfig } from '@/types/store';
 
 const initialStoreConfig: StoreConfig = {
-  name: "Tienda de Juguetes Didácticos",
+  name: "¿Por qué?",
   description: "Desarrollando mentes brillantes, un juguete a la vez",
   whatsApp: "+5352497432",
   email: "contacto@tiendajuguetes.com",
@@ -39,7 +39,8 @@ const initialProducts: Product[] = [
     skills: ["Estimulación sensorial durante la primera infancia", "Coordinación ojo-mano", "Desarrollo motor"],
     collection: "0-3 años",
     image: "",
-    visible: true
+    visible: true,
+    stock: 10
   },
   {
     id: 2,
@@ -50,7 +51,8 @@ const initialProducts: Product[] = [
     skills: ["Reconocimiento de formas", "Coordinación", "Pensamiento espacial"],
     collection: "0-3 años",
     image: "",
-    visible: true
+    visible: true,
+    stock: 15
   },
   {
     id: 3,
@@ -61,7 +63,8 @@ const initialProducts: Product[] = [
     skills: ["Pensamiento lógico", "Paciencia", "Resolución de problemas"],
     collection: "3-6 años",
     image: "",
-    visible: true
+    visible: true,
+    stock: 8
   }
 ];
 
@@ -76,20 +79,21 @@ export const useStore = () => {
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newId = Math.max(...products.map(p => p.id), 0) + 1;
-    setProducts([...products, { ...product, id: newId }]);
+    setProducts([...products, { ...product, id: newId, stock: product.stock || 0 }]);
   };
 
   const addMultipleProducts = (newProducts: Omit<Product, 'id'>[]) => {
     let currentMaxId = Math.max(...products.map(p => p.id), 0);
     const productsWithIds = newProducts.map(product => ({
       ...product,
-      id: ++currentMaxId
+      id: ++currentMaxId,
+      stock: product.stock || 0
     }));
     setProducts(prev => [...prev, ...productsWithIds]);
   };
 
   const updateProduct = (id: number, product: Omit<Product, 'id'>) => {
-    setProducts(products.map(p => p.id === id ? { ...product, id } : p));
+    setProducts(products.map(p => p.id === id ? { ...product, id, stock: product.stock || 0 } : p));
   };
 
   const deleteProduct = (id: number) => {
@@ -102,6 +106,12 @@ export const useStore = () => {
     ));
   };
 
+  const updateProductStock = (id: number, quantity: number) => {
+    setProducts(products.map(p => 
+      p.id === id ? { ...p, stock: Math.max(0, (p.stock || 0) - quantity) } : p
+    ));
+  };
+
   const addCollection = (collection: Omit<Collection, 'id'>) => {
     const newId = Math.max(...collections.map(c => c.id), 0) + 1;
     setCollections([...collections, { ...collection, id: newId }]);
@@ -110,7 +120,6 @@ export const useStore = () => {
   const updateCollection = (id: number, collection: Omit<Collection, 'id'>) => {
     const oldCollection = collections.find(c => c.id === id);
     if (oldCollection) {
-      // Update products that use this collection
       setProducts(products.map(p => 
         p.collection === oldCollection.name ? { ...p, collection: collection.name } : p
       ));
@@ -140,6 +149,7 @@ export const useStore = () => {
     updateProduct,
     deleteProduct,
     toggleProductVisibility,
+    updateProductStock,
     addCollection,
     updateCollection,
     deleteCollection

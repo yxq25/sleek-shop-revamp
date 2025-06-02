@@ -53,7 +53,8 @@ export const AdminPanel = ({
     skills: [],
     collection: '',
     image: '',
-    visible: true
+    visible: true,
+    stock: 0
   });
 
   const [collectionForm, setCollectionForm] = useState<Omit<Collection, 'id'>>({
@@ -64,8 +65,8 @@ export const AdminPanel = ({
   const [configForm, setConfigForm] = useState(storeConfig);
 
   const handleProductSubmit = () => {
-    if (!productForm.name || !productForm.price || !productForm.description || !productForm.age || !productForm.collection) {
-      alert('Por favor complete todos los campos obligatorios');
+    if (!productForm.name) {
+      alert('El nombre del producto es obligatorio');
       return;
     }
 
@@ -102,7 +103,8 @@ export const AdminPanel = ({
       skills: [],
       collection: '',
       image: '',
-      visible: true
+      visible: true,
+      stock: 0
     });
     setEditingProduct(null);
     setShowProductForm(false);
@@ -126,7 +128,8 @@ export const AdminPanel = ({
       skills: product.skills,
       collection: product.collection,
       image: product.image,
-      visible: product.visible
+      visible: product.visible,
+      stock: product.stock || 0
     });
     setEditingProduct(product);
     setShowProductForm(true);
@@ -168,16 +171,16 @@ export const AdminPanel = ({
   }
 
   return (
-    <Card className="bg-white/95 backdrop-blur-sm shadow-xl">
+    <Card className="bg-white shadow-sm border border-gray-100">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-xl font-medium text-gray-900">
           <Settings className="w-5 h-5" />
           Panel de Administración
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 bg-gray-50">
             <TabsTrigger value="products" className="flex items-center gap-2">
               <Package className="w-4 h-4" />
               Productos
@@ -192,18 +195,19 @@ export const AdminPanel = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="products" className="space-y-4">
+          <TabsContent value="products" className="space-y-6 mt-6">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Gestión de Productos</h3>
-              <div className="flex gap-2">
+              <h3 className="text-lg font-medium text-gray-900">Gestión de Productos</h3>
+              <div className="flex gap-3">
                 <Button 
                   onClick={() => setShowExcelImporter(true)} 
-                  className="bg-blue-600 hover:bg-blue-700"
+                  variant="outline"
+                  className="border-gray-200"
                 >
                   <FileSpreadsheet className="w-4 h-4 mr-2" />
                   Importar Excel
                 </Button>
-                <Button onClick={() => setShowProductForm(true)} className="bg-green-600 hover:bg-green-700">
+                <Button onClick={() => setShowProductForm(true)} className="bg-gray-900 hover:bg-gray-800">
                   <Plus className="w-4 h-4 mr-2" />
                   Nuevo Producto
                 </Button>
@@ -211,39 +215,51 @@ export const AdminPanel = ({
             </div>
 
             {showProductForm && (
-              <Card className="p-4 border-2 border-purple-200">
-                <h4 className="font-semibold mb-4">
+              <Card className="p-6 border border-gray-200 bg-gray-50">
+                <h4 className="font-medium mb-6 text-gray-900">
                   {editingProduct ? 'Editar Producto' : 'Agregar Producto'}
                 </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label>Nombre</Label>
+                    <Label className="text-sm font-medium text-gray-700">Nombre *</Label>
                     <Input
                       value={productForm.name}
                       onChange={(e) => setProductForm({...productForm, name: e.target.value})}
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Precio</Label>
+                    <Label className="text-sm font-medium text-gray-700">Precio</Label>
                     <Input
                       type="number"
                       step="0.01"
                       value={productForm.price}
                       onChange={(e) => setProductForm({...productForm, price: parseFloat(e.target.value) || 0})}
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Edad</Label>
+                    <Label className="text-sm font-medium text-gray-700">Edad</Label>
                     <Input
                       value={productForm.age}
                       onChange={(e) => setProductForm({...productForm, age: e.target.value})}
                       placeholder="ej: 0-3 años, 3+, 6-12 meses"
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Colección</Label>
+                    <Label className="text-sm font-medium text-gray-700">Stock disponible</Label>
+                    <Input
+                      type="number"
+                      value={productForm.stock}
+                      onChange={(e) => setProductForm({...productForm, stock: parseInt(e.target.value) || 0})}
+                      className="border-gray-200 focus:border-gray-400"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">Colección</Label>
                     <Select value={productForm.collection} onValueChange={(value) => setProductForm({...productForm, collection: value})}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-gray-200 focus:border-gray-400">
                         <SelectValue placeholder="Seleccionar colección" />
                       </SelectTrigger>
                       <SelectContent>
@@ -255,27 +271,30 @@ export const AdminPanel = ({
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <Label>Habilidades (separadas por comas)</Label>
-                    <Input
-                      value={productForm.skills.join(', ')}
-                      onChange={(e) => setProductForm({...productForm, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
-                      placeholder="Estimulación sensorial, Coordinación, Desarrollo cognitivo"
-                    />
-                  </div>
-                  <div className="space-y-2 md:col-span-2">
-                    <Label>URL de Imagen</Label>
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-700">URL de Imagen</Label>
                     <Input
                       value={productForm.image}
                       onChange={(e) => setProductForm({...productForm, image: e.target.value})}
                       placeholder="https://ejemplo.com/imagen.jpg"
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="space-y-2 md:col-span-2">
-                    <Label>Descripción</Label>
+                    <Label className="text-sm font-medium text-gray-700">Habilidades (separadas por comas)</Label>
+                    <Input
+                      value={productForm.skills.join(', ')}
+                      onChange={(e) => setProductForm({...productForm, skills: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
+                      placeholder="Estimulación sensorial, Coordinación, Desarrollo cognitivo"
+                      className="border-gray-200 focus:border-gray-400"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <Label className="text-sm font-medium text-gray-700">Descripción</Label>
                     <Textarea
                       value={productForm.description}
                       onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="flex items-center space-x-2">
@@ -284,15 +303,15 @@ export const AdminPanel = ({
                       checked={productForm.visible}
                       onCheckedChange={(checked) => setProductForm({...productForm, visible: checked as boolean})}
                     />
-                    <Label htmlFor="visible">Producto visible</Label>
+                    <Label htmlFor="visible" className="text-sm font-medium text-gray-700">Producto visible</Label>
                   </div>
                 </div>
-                <div className="flex gap-2 mt-4">
-                  <Button onClick={handleProductSubmit} className="bg-green-600 hover:bg-green-700">
-                    💾 Guardar
+                <div className="flex gap-3 mt-6">
+                  <Button onClick={handleProductSubmit} className="bg-gray-900 hover:bg-gray-800">
+                    Guardar
                   </Button>
-                  <Button variant="outline" onClick={resetProductForm}>
-                    ❌ Cancelar
+                  <Button variant="outline" onClick={resetProductForm} className="border-gray-200">
+                    Cancelar
                   </Button>
                 </div>
               </Card>
@@ -300,17 +319,22 @@ export const AdminPanel = ({
 
             <div className="space-y-4">
               {products.map(product => (
-                <Card key={product.id} className="p-4">
+                <Card key={product.id} className="p-4 border border-gray-100">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="font-semibold flex items-center gap-2">
+                    <div className="space-y-1">
+                      <h4 className="font-medium flex items-center gap-2 text-gray-900">
                         {product.name}
-                        {!product.visible && <Badge variant="secondary">Oculto</Badge>}
+                        {!product.visible && <Badge variant="secondary" className="text-xs">Oculto</Badge>}
+                        <Badge variant="outline" className="text-xs">
+                          Stock: {product.stock || 0}
+                        </Badge>
                       </h4>
                       <p className="text-sm text-gray-600">Precio: ${product.price.toFixed(2)}</p>
                       <p className="text-sm text-gray-600">Edad: {product.age}</p>
                       <p className="text-sm text-gray-600">Colección: {product.collection}</p>
-                      <p className="text-sm text-gray-600">Habilidades: {product.skills.join(', ')}</p>
+                      {product.skills.length > 0 && (
+                        <p className="text-sm text-gray-600">Habilidades: {product.skills.join(', ')}</p>
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" onClick={() => editProduct(product)}>
@@ -325,13 +349,14 @@ export const AdminPanel = ({
                         {product.visible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </Button>
                       <Button 
-                        variant="destructive" 
+                        variant="outline" 
                         size="sm" 
                         onClick={() => {
                           if (confirm('¿Está seguro de que desea eliminar este producto?')) {
                             onDeleteProduct(product.id);
                           }
                         }}
+                        className="text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -342,42 +367,44 @@ export const AdminPanel = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="collections" className="space-y-4">
+          <TabsContent value="collections" className="space-y-6 mt-6">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold">Gestión de Colecciones</h3>
-              <Button onClick={() => setShowCollectionForm(true)} className="bg-green-600 hover:bg-green-700">
+              <h3 className="text-lg font-medium text-gray-900">Gestión de Colecciones</h3>
+              <Button onClick={() => setShowCollectionForm(true)} className="bg-gray-900 hover:bg-gray-800">
                 <Plus className="w-4 h-4 mr-2" />
                 Nueva Colección
               </Button>
             </div>
 
             {showCollectionForm && (
-              <Card className="p-4 border-2 border-purple-200">
-                <h4 className="font-semibold mb-4">
+              <Card className="p-6 border border-gray-200 bg-gray-50">
+                <h4 className="font-medium mb-6 text-gray-900">
                   {editingCollection ? 'Editar Colección' : 'Agregar Colección'}
                 </h4>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Nombre</Label>
+                    <Label className="text-sm font-medium text-gray-700">Nombre</Label>
                     <Input
                       value={collectionForm.name}
                       onChange={(e) => setCollectionForm({...collectionForm, name: e.target.value})}
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Descripción</Label>
+                    <Label className="text-sm font-medium text-gray-700">Descripción</Label>
                     <Textarea
                       value={collectionForm.description}
                       onChange={(e) => setCollectionForm({...collectionForm, description: e.target.value})}
+                      className="border-gray-200 focus:border-gray-400"
                     />
                   </div>
                 </div>
-                <div className="flex gap-2 mt-4">
-                  <Button onClick={handleCollectionSubmit} className="bg-green-600 hover:bg-green-700">
-                    💾 Guardar
+                <div className="flex gap-3 mt-6">
+                  <Button onClick={handleCollectionSubmit} className="bg-gray-900 hover:bg-gray-800">
+                    Guardar
                   </Button>
-                  <Button variant="outline" onClick={resetCollectionForm}>
-                    ❌ Cancelar
+                  <Button variant="outline" onClick={resetCollectionForm} className="border-gray-200">
+                    Cancelar
                   </Button>
                 </div>
               </Card>
@@ -385,10 +412,10 @@ export const AdminPanel = ({
 
             <div className="space-y-4">
               {collections.map(collection => (
-                <Card key={collection.id} className="p-4">
+                <Card key={collection.id} className="p-4 border border-gray-100">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h4 className="font-semibold">{collection.name}</h4>
+                      <h4 className="font-medium text-gray-900">{collection.name}</h4>
                       <p className="text-sm text-gray-600 mt-2">{collection.description}</p>
                     </div>
                     <div className="flex gap-2">
@@ -396,13 +423,14 @@ export const AdminPanel = ({
                         <Edit className="w-4 h-4" />
                       </Button>
                       <Button 
-                        variant="destructive" 
+                        variant="outline" 
                         size="sm" 
                         onClick={() => {
                           if (confirm('¿Está seguro de que desea eliminar esta colección?')) {
                             handleDeleteCollection(collection.id);
                           }
                         }}
+                        className="text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -413,62 +441,69 @@ export const AdminPanel = ({
             </div>
           </TabsContent>
 
-          <TabsContent value="store" className="space-y-4">
-            <h3 className="text-lg font-semibold">Configuración de la Tienda</h3>
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <TabsContent value="store" className="space-y-6 mt-6">
+            <h3 className="text-lg font-medium text-gray-900">Configuración de la Tienda</h3>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label>Nombre de la Tienda</Label>
+                  <Label className="text-sm font-medium text-gray-700">Nombre de la Tienda</Label>
                   <Input
                     value={configForm.name}
                     onChange={(e) => setConfigForm({...configForm, name: e.target.value})}
+                    className="border-gray-200 focus:border-gray-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Teléfono WhatsApp</Label>
+                  <Label className="text-sm font-medium text-gray-700">Teléfono WhatsApp</Label>
                   <Input
                     value={configForm.whatsApp}
                     onChange={(e) => setConfigForm({...configForm, whatsApp: e.target.value})}
                     placeholder="+5352497432"
+                    className="border-gray-200 focus:border-gray-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Email</Label>
+                  <Label className="text-sm font-medium text-gray-700">Email</Label>
                   <Input
                     type="email"
                     value={configForm.email}
                     onChange={(e) => setConfigForm({...configForm, email: e.target.value})}
+                    className="border-gray-200 focus:border-gray-400"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Dirección</Label>
+                  <Label className="text-sm font-medium text-gray-700">Dirección</Label>
                   <Input
                     value={configForm.address}
                     onChange={(e) => setConfigForm({...configForm, address: e.target.value})}
+                    className="border-gray-200 focus:border-gray-400"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Descripción</Label>
+                <Label className="text-sm font-medium text-gray-700">Descripción</Label>
                 <Input
                   value={configForm.description}
                   onChange={(e) => setConfigForm({...configForm, description: e.target.value})}
+                  className="border-gray-200 focus:border-gray-400"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Métodos de Pago (separados por comas)</Label>
+                <Label className="text-sm font-medium text-gray-700">Métodos de Pago (separados por comas)</Label>
                 <Input
                   value={configForm.paymentMethods.join(', ')}
                   onChange={(e) => setConfigForm({...configForm, paymentMethods: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
                   placeholder="Efectivo, Transferencia, Tarjeta"
+                  className="border-gray-200 focus:border-gray-400"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Zonas de Delivery (separadas por comas)</Label>
+                <Label className="text-sm font-medium text-gray-700">Zonas de Delivery (separadas por comas)</Label>
                 <Input
                   value={configForm.deliveryZones.join(', ')}
                   onChange={(e) => setConfigForm({...configForm, deliveryZones: e.target.value.split(',').map(s => s.trim()).filter(s => s)})}
                   placeholder="Centro, Norte, Sur"
+                  className="border-gray-200 focus:border-gray-400"
                 />
               </div>
               <Button 
@@ -476,9 +511,9 @@ export const AdminPanel = ({
                   onUpdateStoreConfig(configForm);
                   alert('Configuración guardada exitosamente');
                 }}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-gray-900 hover:bg-gray-800"
               >
-                💾 Guardar Configuración
+                Guardar Configuración
               </Button>
             </div>
           </TabsContent>

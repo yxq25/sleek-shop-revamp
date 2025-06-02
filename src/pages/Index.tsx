@@ -99,12 +99,12 @@ const Index = () => {
     });
   }, [store.products, searchTerm, collectionFilter, ageFilter, skillFilter]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
     cart.addToCart({
       id: product.id,
       name: product.name,
       price: product.price
-    });
+    }, quantity);
   };
 
   const handleCartButtonClick = () => {
@@ -112,7 +112,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-brand">
+    <div className="min-h-screen bg-white">
       <Header 
         storeName={store.storeConfig.name}
         storeDescription={store.storeConfig.description}
@@ -138,18 +138,16 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar con carrito */}
           <div className="lg:w-80 space-y-6">
             <Cart
               cart={cart.cart}
               total={cart.getTotal()}
+              onUpdateQuantity={cart.updateQuantity}
               onRemoveItem={cart.removeFromCart}
-              onCheckout={() => {}}
               storeConfig={store.storeConfig}
             />
           </div>
 
-          {/* Contenido principal */}
           <div className="flex-1 space-y-8">
             {auth.isAdminMode && (
               <AdminPanel
@@ -182,9 +180,9 @@ const Index = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {filteredProducts.length === 0 ? (
-                <div className="col-span-full text-center py-12">
+                <div className="col-span-full text-center py-16">
                   <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-gray-600 mb-2">
+                  <h3 className="text-xl font-medium text-gray-600 mb-2">
                     No se encontraron productos
                   </h3>
                   <p className="text-gray-500">

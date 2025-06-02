@@ -9,6 +9,7 @@ export interface Product {
   collection: string;
   image: string;
   visible: boolean;
+  stock?: number; // Cantidad disponible
 }
 
 export interface Collection {
@@ -31,4 +32,14 @@ export interface CartItem {
   id: number;
   name: string;
   price: number;
+  quantity: number;
+}
+
+export interface CustomerInfo {
+  fullName: string;
+  phone: string;
+  address: string;
+  paymentMethod: string;
+  preferredTime: string;
+  comments: string;
 }

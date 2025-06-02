@@ -1,124 +1,136 @@
 
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, X, MessageSquare } from 'lucide-react';
-import { CartItem, StoreConfig } from '@/types/store';
+import { ShoppingCart, Minus, Plus, Trash2 } from 'lucide-react';
+import { CartItem, StoreConfig, CustomerInfo } from '@/types/store';
+import { CustomerInfoModal } from '@/components/CustomerInfoModal';
 
 interface CartProps {
   cart: CartItem[];
   total: number;
+  onUpdateQuantity: (id: number, quantity: number) => void;
   onRemoveItem: (index: number) => void;
-  onCheckout: () => void;
   storeConfig: StoreConfig;
 }
 
-export const Cart = ({ cart, total, onRemoveItem, onCheckout, storeConfig }: CartProps) => {
-  const checkout = () => {
-    if (cart.length === 0) return;
+export const Cart = ({ cart, total, onUpdateQuantity, onRemoveItem, storeConfig }: CartProps) => {
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
 
-    let message = `🎯 *¡NUEVA ORDEN DE COMPRA!* 🎯\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
-    message += `🏪 *Tienda:* ${storeConfig.name}\n`;
-    message += `💡 *"Desarrollando mentes brillantes, un juguete a la vez"*\n\n`;
-    message += `📦 *PRODUCTOS SELECCIONADOS:*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
+  const handleCheckout = (customerInfo: CustomerInfo) => {
+    let message = `🎯 *¡NUEVA ORDEN DE COMPRA!* 🎯\n\n`;
+    message += `🏪 *${storeConfig.name}*\n\n`;
+    message += `📦 *PRODUCTOS:*\n`;
     
     cart.forEach((item, index) => {
-      message += `${index + 1}. 🧸 ${item.name}\n`;
-      message += `   💰 $${item.price.toFixed(2)}\n\n`;
+      message += `${index + 1}. ${item.name}\n`;
+      message += `   Cantidad: ${item.quantity}\n`;
+      message += `   Precio unitario: $${item.price.toFixed(2)}\n`;
+      message += `   Subtotal: $${(item.price * item.quantity).toFixed(2)}\n\n`;
     });
     
-    message += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `💎 *TOTAL A PAGAR: $${total.toFixed(2)}*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
+    message += `💰 *TOTAL: $${total.toFixed(2)}*\n\n`;
+    message += `👤 *INFORMACIÓN DEL CLIENTE:*\n`;
+    message += `Nombre: ${customerInfo.fullName}\n`;
+    message += `Teléfono: ${customerInfo.phone}\n`;
+    message += `Dirección: ${customerInfo.address}\n`;
+    message += `Método de pago: ${customerInfo.paymentMethod}\n`;
     
-    message += `📞 *INFORMACIÓN DE CONTACTO:*\n`;
-    message += `📧 Email: ${storeConfig.email}\n`;
-    message += `📍 Dirección: ${storeConfig.address}\n\n`;
-    
-    message += `💳 *MÉTODOS DE PAGO DISPONIBLES:*\n`;
-    storeConfig.paymentMethods.forEach((method, index) => {
-      message += `${index + 1}. ✅ ${method}\n`;
-    });
-    
-    message += `\n🚚 *ZONAS DE DELIVERY DISPONIBLES:*\n`;
-    storeConfig.deliveryZones.forEach((zone, index) => {
-      message += `${index + 1}. 📍 ${zone}\n`;
-    });
-    
-    message += `\n━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📝 *POR FAVOR, COMPLETA ESTA INFORMACIÓN:*\n\n`;
-    message += `👤 *Nombre completo:*\n`;
-    message += `📱 *Teléfono de contacto:*\n`;
-    message += `🏠 *Dirección completa para entrega:*\n`;
-    message += `💳 *Método de pago elegido:*\n`;
-    message += `⏰ *Horario preferido para entrega:*\n`;
-    message += `📝 *Comentarios adicionales:*\n\n`;
-    
-    message += `━━━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `¡Gracias por confiar en nosotros! 🌟\n`;
-    message += `Responderemos tu pedido a la brevedad 🚀`;
+    if (customerInfo.preferredTime) {
+      message += `Horario preferido: ${customerInfo.preferredTime}\n`;
+    }
+    if (customerInfo.comments) {
+      message += `Comentarios: ${customerInfo.comments}\n`;
+    }
 
     const whatsappUrl = `https://wa.me/${storeConfig.whatsApp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   return (
-    <Card id="cart-section" className="w-full max-w-sm bg-white/95 backdrop-blur-sm shadow-xl border-2 border-yellow-200">
-      <CardHeader className="pb-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-t-lg">
-        <CardTitle className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-orange-600" />
-            <span className="text-gray-800 font-bold">Mi Carrito</span>
-          </div>
-          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800 border-0">
-            {cart.length}
-          </Badge>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4 p-6">
-        <div className="max-h-64 overflow-y-auto space-y-3">
-          {cart.length === 0 ? (
-            <div className="text-center py-8">
-              <div className="text-4xl mb-3">🛒</div>
-              <p className="text-gray-500 font-medium">Tu carrito está vacío</p>
-              <p className="text-sm text-gray-400">¡Agrega algunos juguetes increíbles!</p>
+    <>
+      <Card id="cart-section" className="w-full max-w-sm bg-white shadow-sm border border-gray-100">
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center justify-between text-lg font-medium text-gray-900">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5" />
+              Carrito
             </div>
-          ) : (
-            cart.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 shadow-sm">
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate text-gray-800">{item.name}</p>
-                  <p className="text-orange-700 font-bold">${item.price.toFixed(2)}</p>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => onRemoveItem(index)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full h-8 w-8 p-0"
-                >
-                  <X className="w-4 h-4" />
-                </Button>
+            <div className="text-sm font-normal text-gray-500">
+              {cart.reduce((sum, item) => sum + item.quantity, 0)} artículos
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="max-h-64 overflow-y-auto space-y-3">
+            {cart.length === 0 ? (
+              <div className="text-center py-12">
+                <ShoppingCart className="w-12 h-12 mx-auto text-gray-300 mb-3" />
+                <p className="text-gray-500 font-medium">Tu carrito está vacío</p>
+                <p className="text-sm text-gray-400">Agrega productos para comenzar</p>
               </div>
-            ))
-          )}
-        </div>
-        
-        <div className="border-t border-yellow-200 pt-4">
-          <div className="text-center mb-4 p-3 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg">
-            <p className="text-lg font-bold text-gray-800">Total: ${total.toFixed(2)}</p>
+            ) : (
+              cart.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm text-gray-900 truncate">{item.name}</p>
+                    <p className="text-sm text-gray-600">${item.price.toFixed(2)} c/u</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center border border-gray-200 rounded">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                        className="h-7 w-7 p-0 hover:bg-gray-100"
+                      >
+                        <Minus className="w-3 h-3" />
+                      </Button>
+                      <span className="w-8 text-center text-sm">{item.quantity}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                        className="h-7 w-7 p-0 hover:bg-gray-100"
+                      >
+                        <Plus className="w-3 h-3" />
+                      </Button>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onRemoveItem(index)}
+                      className="h-7 w-7 p-0 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-          <Button
-            onClick={checkout}
-            disabled={cart.length === 0}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:shadow-lg"
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            Comprar por WhatsApp
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          
+          <div className="border-t border-gray-100 pt-4">
+            <div className="text-center mb-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-lg font-semibold text-gray-900">Total: ${total.toFixed(2)}</p>
+            </div>
+            <Button
+              onClick={() => setShowCustomerModal(true)}
+              disabled={cart.length === 0}
+              className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium"
+            >
+              Realizar Pedido
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <CustomerInfoModal
+        open={showCustomerModal}
+        onClose={() => setShowCustomerModal(false)}
+        onSubmit={handleCheckout}
+        storeConfig={storeConfig}
+      />
+    </>
   );
 };

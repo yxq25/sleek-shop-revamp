@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Download, Upload, FileSpreadsheet, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { Product, Collection } from '@/types/store';
@@ -40,6 +39,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
         'Habilidades': 'Coordinación, Creatividad, Pensamiento espacial',
         'Colección': collections[0]?.name || '0-3 años',
         'Imagen URL': 'https://ejemplo.com/imagen.jpg',
+        'Stock': 10,
         'Visible': 'SI'
       }
     ];
@@ -67,7 +67,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const jsonData = XLSX.utils.sheet_to_json(worksheet);
-        setPreviewData(jsonData.slice(0, 5)); // Solo mostrar las primeras 5 filas como preview
+        setPreviewData(jsonData.slice(0, 5));
       } catch (error) {
         console.error('Error parsing Excel file:', error);
         alert('Error al leer el archivo Excel. Verifique que el formato sea correcto.');
@@ -80,44 +80,37 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    // Validar campos obligatorios
+    // Solo validar nombre como obligatorio
     if (!row['Nombre'] || typeof row['Nombre'] !== 'string') {
-      errors.push(`Fila ${index + 2}: Nombre es obligatorio y debe ser texto`);
-    }
-    
-    if (!row['Precio'] || isNaN(Number(row['Precio']))) {
-      errors.push(`Fila ${index + 2}: Precio es obligatorio y debe ser numérico`);
+      errors.push(`Fila ${index + 2}: Nombre es obligatorio`);
     }
 
-    if (!row['Descripción'] || typeof row['Descripción'] !== 'string') {
-      errors.push(`Fila ${index + 2}: Descripción es obligatoria`);
-    }
-
-    if (!row['Edad'] || typeof row['Edad'] !== 'string') {
-      errors.push(`Fila ${index + 2}: Edad es obligatoria`);
-    }
-
-    if (!row['Colección'] || typeof row['Colección'] !== 'string') {
-      errors.push(`Fila ${index + 2}: Colección es obligatoria`);
-    }
-
-    // Validar que la colección exista
-    const collectionExists = collections.some(c => c.name === row['Colección']);
-    if (row['Colección'] && !collectionExists) {
-      errors.push(`Fila ${index + 2}: La colección "${row['Colección']}" no existe`);
-    }
+    // Valores por defecto para campos opcionales
+    const price = row['Precio'] ? Number(row['Precio']) : 0;
+    const description = row['Descripción'] ? String(row['Descripción']).trim() : '';
+    const age = row['Edad'] ? String(row['Edad']).trim() : '';
+    const stock = row['Stock'] ? Number(row['Stock']) : 0;
 
     // Procesar habilidades
     let skills: string[] = [];
     if (row['Habilidades']) {
       if (typeof row['Habilidades'] === 'string') {
         skills = row['Habilidades'].split(',').map((s: string) => s.trim()).filter((s: string) => s);
-      } else {
-        warnings.push(`Fila ${index + 2}: Las habilidades deben ser texto separado por comas`);
       }
     }
 
-    // Validar URL de imagen (opcional pero si está presente debe ser válida)
+    // Validar que la colección exista o usar la primera disponible
+    let collection = collections[0]?.name || '';
+    if (row['Colección']) {
+      const collectionExists = collections.some(c => c.name === row['Colección']);
+      if (collectionExists) {
+        collection = row['Colección'];
+      } else {
+        warnings.push(`Fila ${index + 2}: La colección "${row['Colección']}" no existe, se usará "${collection}"`);
+      }
+    }
+
+    // Procesar URL de imagen
     let imageUrl = '';
     if (row['Imagen URL']) {
       try {
@@ -141,13 +134,14 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
 
     const product: Omit<Product, 'id'> = {
       name: String(row['Nombre']).trim(),
-      price: Number(row['Precio']),
-      description: String(row['Descripción']).trim(),
-      age: String(row['Edad']).trim(),
+      price,
+      description,
+      age,
       skills,
-      collection: String(row['Colección']).trim(),
+      collection,
       image: imageUrl,
-      visible
+      visible,
+      stock
     };
 
     return { product, errors, warnings };
@@ -217,47 +211,45 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
   };
 
   return (
-    <Card className="w-full max-w-4xl">
+    <Card className="w-full max-w-4xl bg-white">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-xl font-medium">
           <FileSpreadsheet className="w-5 h-5" />
           Importar Productos desde Excel
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* Botón para descargar plantilla */}
         <div className="flex flex-col sm:flex-row gap-4">
           <Button 
             onClick={downloadTemplate}
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 border-gray-200"
           >
             <Download className="w-4 h-4" />
-            Descargar Plantilla Excel
+            Descargar Plantilla
           </Button>
           
           <div className="flex-1">
-            <Label htmlFor="excel-file">Seleccionar archivo Excel</Label>
+            <Label htmlFor="excel-file" className="text-sm font-medium">Seleccionar archivo Excel</Label>
             <Input
               id="excel-file"
               type="file"
               accept=".xlsx,.xls"
               onChange={handleFileChange}
-              className="mt-1"
+              className="mt-1 border-gray-200"
             />
           </div>
         </div>
 
-        {/* Preview de datos */}
         {previewData.length > 0 && !importing && !importResult && (
           <div className="space-y-4">
-            <h4 className="font-semibold">Vista previa (primeras 5 filas):</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
+            <h4 className="font-medium">Vista previa:</h4>
+            <div className="overflow-x-auto bg-gray-50 rounded-lg p-4">
+              <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50">
+                  <tr className="border-b border-gray-200">
                     {Object.keys(previewData[0]).map(key => (
-                      <th key={key} className="border border-gray-300 px-2 py-1 text-left text-sm font-medium">
+                      <th key={key} className="text-left p-2 font-medium text-gray-700">
                         {key}
                       </th>
                     ))}
@@ -265,9 +257,9 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
                 </thead>
                 <tbody>
                   {previewData.map((row, index) => (
-                    <tr key={index}>
+                    <tr key={index} className="border-b border-gray-100">
                       {Object.values(row).map((value, cellIndex) => (
-                        <td key={cellIndex} className="border border-gray-300 px-2 py-1 text-sm">
+                        <td key={cellIndex} className="p-2 text-gray-600">
                           {String(value)}
                         </td>
                       ))}
@@ -281,19 +273,18 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
               <Button 
                 onClick={handleImport}
                 disabled={importing}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-gray-900 hover:bg-gray-800"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Importar Productos
               </Button>
-              <Button variant="outline" onClick={onClose}>
+              <Button variant="outline" onClick={onClose} className="border-gray-200">
                 Cancelar
               </Button>
             </div>
           </div>
         )}
 
-        {/* Progreso de importación */}
         {importing && (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -304,61 +295,52 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
           </div>
         )}
 
-        {/* Resultados de importación */}
         {importResult && (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-green-600" />
-              <span className="font-semibold">Importación completada</span>
+              <span className="font-medium">Importación completada</span>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="p-4 border-green-200 bg-green-50">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">{importResult.success}</div>
-                  <div className="text-sm text-green-700">Productos importados</div>
-                </div>
-              </Card>
+              <div className="p-4 bg-green-50 rounded-lg text-center">
+                <div className="text-2xl font-bold text-green-600">{importResult.success}</div>
+                <div className="text-sm text-green-700">Productos importados</div>
+              </div>
               
-              <Card className="p-4 border-red-200 bg-red-50">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-red-600">{importResult.errors.length}</div>
-                  <div className="text-sm text-red-700">Errores</div>
-                </div>
-              </Card>
+              <div className="p-4 bg-red-50 rounded-lg text-center">
+                <div className="text-2xl font-bold text-red-600">{importResult.errors.length}</div>
+                <div className="text-sm text-red-700">Errores</div>
+              </div>
               
-              <Card className="p-4 border-yellow-200 bg-yellow-50">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-yellow-600">{importResult.warnings.length}</div>
-                  <div className="text-sm text-yellow-700">Advertencias</div>
-                </div>
-              </Card>
+              <div className="p-4 bg-yellow-50 rounded-lg text-center">
+                <div className="text-2xl font-bold text-yellow-600">{importResult.warnings.length}</div>
+                <div className="text-sm text-yellow-700">Advertencias</div>
+              </div>
             </div>
 
-            {/* Mostrar errores */}
             {importResult.errors.length > 0 && (
-              <Alert className="border-red-200">
+              <Alert className="border-red-200 bg-red-50">
                 <XCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <div className="font-semibold mb-2">Errores encontrados:</div>
-                  <ul className="list-disc pl-4 space-y-1">
+                  <div className="font-medium mb-2">Errores:</div>
+                  <ul className="list-disc pl-4 space-y-1 text-sm">
                     {importResult.errors.map((error, index) => (
-                      <li key={index} className="text-sm">{error}</li>
+                      <li key={index}>{error}</li>
                     ))}
                   </ul>
                 </AlertDescription>
               </Alert>
             )}
 
-            {/* Mostrar advertencias */}
             {importResult.warnings.length > 0 && (
-              <Alert className="border-yellow-200">
+              <Alert className="border-yellow-200 bg-yellow-50">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
-                  <div className="font-semibold mb-2">Advertencias:</div>
-                  <ul className="list-disc pl-4 space-y-1">
+                  <div className="font-medium mb-2">Advertencias:</div>
+                  <ul className="list-disc pl-4 space-y-1 text-sm">
                     {importResult.warnings.map((warning, index) => (
-                      <li key={index} className="text-sm">{warning}</li>
+                      <li key={index}>{warning}</li>
                     ))}
                   </ul>
                 </AlertDescription>
@@ -366,7 +348,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
             )}
 
             <div className="flex gap-2">
-              <Button onClick={onClose} className="bg-blue-600 hover:bg-blue-700">
+              <Button onClick={onClose} className="bg-gray-900 hover:bg-gray-800">
                 Finalizar
               </Button>
               <Button 
@@ -377,6 +359,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
                   setImportResult(null);
                   setProgress(0);
                 }}
+                className="border-gray-200"
               >
                 Importar Otro Archivo
               </Button>
@@ -384,20 +367,20 @@ export const ExcelImporter = ({ collections, onImportProducts, onClose }: ExcelI
           </div>
         )}
 
-        {/* Información sobre el formato */}
-        <Alert>
+        <Alert className="border-gray-200 bg-gray-50">
           <AlertTriangle className="h-4 w-4" />
           <AlertDescription>
-            <div className="font-semibold mb-2">Formato requerido:</div>
-            <ul className="list-disc pl-4 space-y-1 text-sm">
+            <div className="font-medium mb-2">Solo el nombre es obligatorio:</div>
+            <ul className="list-disc pl-4 space-y-1 text-sm text-gray-600">
               <li><strong>Nombre:</strong> Texto obligatorio</li>
-              <li><strong>Precio:</strong> Número obligatorio</li>
-              <li><strong>Descripción:</strong> Texto obligatorio</li>
-              <li><strong>Edad:</strong> Texto obligatorio (ej: "0-3 años", "3+")</li>
-              <li><strong>Habilidades:</strong> Texto separado por comas</li>
-              <li><strong>Colección:</strong> Debe coincidir con una colección existente</li>
+              <li><strong>Precio:</strong> Número (opcional, defecto: 0)</li>
+              <li><strong>Descripción:</strong> Texto (opcional)</li>
+              <li><strong>Edad:</strong> Texto (opcional)</li>
+              <li><strong>Habilidades:</strong> Separadas por comas (opcional)</li>
+              <li><strong>Colección:</strong> Debe existir (opcional, usa la primera si no coincide)</li>
+              <li><strong>Stock:</strong> Número de unidades disponibles (opcional, defecto: 0)</li>
               <li><strong>Imagen URL:</strong> URL válida (opcional)</li>
-              <li><strong>Visible:</strong> "SI" o "NO" (opcional, por defecto "SI")</li>
+              <li><strong>Visible:</strong> "SI" o "NO" (opcional, defecto: "SI")</li>
             </ul>
           </AlertDescription>
         </Alert>
