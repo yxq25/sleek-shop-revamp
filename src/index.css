@@ -43,26 +43,6 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Google-inspired color palette with logo colors */
-    --google-blue: 219 85% 53%;
-    --google-blue-dark: 219 85% 45%;
-    --google-yellow: 45 100% 51%;
-    --google-yellow-dark: 39 100% 45%;
-    --google-red: 4 90% 58%;
-    --google-green: 142 71% 45%;
-    
-    /* Clean neutral grays like Google */
-    --gray-50: 0 0% 98%;
-    --gray-100: 240 5% 96%;
-    --gray-200: 240 6% 90%;
-    --gray-300: 240 5% 84%;
-    --gray-400: 240 4% 64%;
-    --gray-500: 240 4% 46%;
-    --gray-600: 240 5% 34%;
-    --gray-700: 240 5% 26%;
-    --gray-800: 240 4% 16%;
-    --gray-900: 240 6% 10%;
   }
 
   .dark {
@@ -113,39 +93,6 @@
   font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
-/* Google color classes */
-.bg-google-blue {
-  background-color: hsl(var(--google-blue));
-}
-
-.bg-google-blue-dark {
-  background-color: hsl(var(--google-blue-dark));
-}
-
-.bg-google-yellow {
-  background-color: hsl(var(--google-yellow));
-}
-
-.bg-google-yellow-dark {
-  background-color: hsl(var(--google-yellow-dark));
-}
-
-.text-google-blue {
-  color: hsl(var(--google-blue));
-}
-
-.text-google-yellow {
-  color: hsl(var(--google-yellow-dark));
-}
-
-.border-google-blue {
-  border-color: hsl(var(--google-blue));
-}
-
-.border-google-yellow {
-  border-color: hsl(var(--google-yellow));
-}
-
 /* Google-style buttons */
 .btn-google-primary {
   @apply bg-google-blue text-white font-medium px-6 py-3 rounded-md transition-all duration-200 hover:bg-google-blue-dark hover:shadow-md;
@@ -190,7 +137,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: linear-gradient(135deg, hsl(var(--google-yellow)), hsl(var(--google-blue)));
+  background: linear-gradient(135deg, theme('colors.google-yellow.DEFAULT'), theme('colors.google-blue.DEFAULT'));
   padding: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -295,12 +242,20 @@
   }
 }
 
-/* Fix for overly long CSS - improved organization */
+/* Modern focus states */
+.focus-ring-google {
+  @apply focus:outline-none focus:ring-2 focus:ring-google-blue focus:ring-offset-2;
+}
+
+/* Additional utility classes */
 .text-balance {
   text-wrap: balance;
 }
 
-/* Modern focus states */
-.focus-ring-google {
-  @apply focus:outline-none focus:ring-2 focus:ring-google-blue focus:ring-offset-2;
+/* Fix line clamp for better text truncation */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }

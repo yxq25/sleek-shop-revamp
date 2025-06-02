@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,7 +62,18 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Google-inspired colors matching the logo
+				'google-blue': {
+					DEFAULT: 'hsl(219, 85%, 53%)',
+					dark: 'hsl(219, 85%, 45%)'
+				},
+				'google-yellow': {
+					DEFAULT: 'hsl(45, 100%, 51%)',
+					dark: 'hsl(39, 100%, 45%)'
+				},
+				'google-red': 'hsl(4, 90%, 58%)',
+				'google-green': 'hsl(142, 71%, 45%)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
