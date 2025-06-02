@@ -79,17 +79,31 @@ export const useStore = () => {
 
   const addProduct = (product: Omit<Product, 'id'>) => {
     const newId = Math.max(...products.map(p => p.id), 0) + 1;
-    setProducts([...products, { ...product, id: newId, stock: product.stock || 0 }]);
+    const newProduct = { ...product, id: newId, stock: product.stock || 0 };
+    setProducts(prev => [...prev, newProduct]);
+    console.log('Producto agregado:', newProduct);
   };
 
   const addMultipleProducts = (newProducts: Omit<Product, 'id'>[]) => {
     let currentMaxId = Math.max(...products.map(p => p.id), 0);
-    const productsWithIds = newProducts.map(product => ({
-      ...product,
-      id: ++currentMaxId,
-      stock: product.stock || 0
-    }));
-    setProducts(prev => [...prev, ...productsWithIds]);
+    const productsWithIds = newProducts.map(product => {
+      currentMaxId++;
+      const newProduct = {
+        ...product,
+        id: currentMaxId,
+        stock: product.stock || 0
+      };
+      console.log('Producto creado para agregar:', newProduct);
+      return newProduct;
+    });
+    
+    setProducts(prev => {
+      const updated = [...prev, ...productsWithIds];
+      console.log('Lista actualizada de productos:', updated);
+      return updated;
+    });
+    
+    console.log(`${productsWithIds.length} productos agregados exitosamente`);
   };
 
   const updateProduct = (id: number, product: Omit<Product, 'id'>) => {
@@ -114,7 +128,13 @@ export const useStore = () => {
 
   const addCollection = (collection: Omit<Collection, 'id'>) => {
     const newId = Math.max(...collections.map(c => c.id), 0) + 1;
-    setCollections([...collections, { ...collection, id: newId }]);
+    const newCollection = { ...collection, id: newId };
+    setCollections(prev => {
+      const updated = [...prev, newCollection];
+      console.log('Colección agregada:', newCollection);
+      console.log('Lista actualizada de colecciones:', updated);
+      return updated;
+    });
   };
 
   const updateCollection = (id: number, collection: Omit<Collection, 'id'>) => {

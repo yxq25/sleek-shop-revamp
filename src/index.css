@@ -44,15 +44,23 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Custom colors inspired by the logo - Yellow/Orange as primary */
-    --yellow-brand: 45 93% 66%;
-    --yellow-brand-dark: 39 100% 56%;
-    --orange-brand: 33 100% 60%;
-    --orange-brand-dark: 29 100% 50%;
+    /* Google Material Design inspired colors */
+    --yellow-brand: 45 100% 51%;
+    --yellow-brand-dark: 39 100% 45%;
+    --orange-brand: 33 100% 55%;
+    --orange-brand-dark: 29 100% 48%;
     
-    /* Purple/Blue as secondary/accent colors */
-    --purple-accent: 260 64% 65%;
-    --blue-accent: 220 91% 65%;
+    /* Clean neutral colors */
+    --gray-50: 210 20% 98%;
+    --gray-100: 220 14% 96%;
+    --gray-200: 220 13% 91%;
+    --gray-300: 216 12% 84%;
+    --gray-400: 218 11% 65%;
+    --gray-500: 220 9% 46%;
+    --gray-600: 215 14% 34%;
+    --gray-700: 217 19% 27%;
+    --gray-800: 215 28% 17%;
+    --gray-900: 222 84% 5%;
   }
 
   .dark {
@@ -101,42 +109,58 @@
 
   body {
     @apply bg-background text-foreground;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
   }
 }
 
-/* Custom animations for better UX */
-@keyframes bounce-gentle {
+/* Google Material Design inspired animations */
+@keyframes gentle-bounce {
   0%, 100% {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-5px);
+    transform: translateY(-8px);
   }
 }
 
-.animate-bounce-gentle {
-  animation: bounce-gentle 2s infinite;
-}
-
-@keyframes glow {
+@keyframes soft-glow {
   0%, 100% {
-    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.2);
   }
   50% {
-    box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.4), 0 0 40px rgba(251, 191, 36, 0.1);
   }
 }
 
-.animate-glow {
-  animation: glow 3s ease-in-out infinite;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Smooth scroll behavior */
+.animate-gentle-bounce {
+  animation: gentle-bounce 3s ease-in-out infinite;
+}
+
+.animate-soft-glow {
+  animation: soft-glow 4s ease-in-out infinite;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out;
+}
+
+/* Clean scroll behavior */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom brand colors matching the logo */
+/* Custom brand colors - Google Material inspired */
 .bg-yellow-brand {
   background-color: hsl(var(--yellow-brand));
 }
@@ -165,7 +189,7 @@ html {
   border-color: hsl(var(--yellow-brand));
 }
 
-/* Logo circular frame styling */
+/* Modern logo frame */
 .logo-frame {
   position: relative;
   display: flex;
@@ -173,64 +197,116 @@ html {
   justify-content: center;
   border-radius: 50%;
   background: linear-gradient(135deg, hsl(var(--yellow-brand)), hsl(var(--orange-brand)));
-  padding: 8px;
-  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
-  transition: all 0.3s ease;
+  padding: 12px;
+  box-shadow: 
+    0 20px 40px rgba(251, 191, 36, 0.15),
+    0 10px 20px rgba(251, 191, 36, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logo-frame:hover {
-  transform: scale(1.05);
-  box-shadow: 0 15px 40px rgba(251, 191, 36, 0.4);
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 
+    0 30px 60px rgba(251, 191, 36, 0.2),
+    0 15px 30px rgba(251, 191, 36, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .logo-frame img {
   border-radius: 50%;
   background: white;
-  padding: 4px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Primary button styling with brand colors */
+/* Material Design inspired buttons */
 .btn-primary {
   background: linear-gradient(135deg, hsl(var(--yellow-brand)), hsl(var(--orange-brand)));
   color: #1f2937;
   font-weight: 600;
-  transition: all 0.3s ease;
+  border-radius: 12px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 
+    0 4px 12px rgba(251, 191, 36, 0.2),
+    0 2px 4px rgba(251, 191, 36, 0.1);
 }
 
 .btn-primary:hover {
   background: linear-gradient(135deg, hsl(var(--yellow-brand-dark)), hsl(var(--orange-brand-dark)));
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+  box-shadow: 
+    0 8px 24px rgba(251, 191, 36, 0.3),
+    0 4px 12px rgba(251, 191, 36, 0.2);
 }
 
-/* Secondary button styling */
-.btn-secondary {
-  background: linear-gradient(135deg, hsl(var(--purple-accent)), hsl(var(--blue-accent)));
-  color: white;
-  font-weight: 600;
-  transition: all 0.3s ease;
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 4px 12px rgba(251, 191, 36, 0.2),
+    0 2px 4px rgba(251, 191, 36, 0.1);
 }
 
-.btn-secondary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
-}
-
-/* Card hover effects */
+/* Card improvements */
 .card-hover {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 16px;
 }
 
 .card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.08),
+    0 8px 16px rgba(0, 0, 0, 0.04);
 }
 
-/* Clean gradients for backgrounds */
+/* Clean backgrounds */
 .bg-gradient-brand {
-  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fde68a 100%);
+  background: linear-gradient(135deg, #fefce8 0%, #fef3c7 50%, #fed7aa 100%);
 }
 
-.bg-gradient-secondary {
-  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #ddd6fe 100%);
+.bg-gradient-subtle {
+  background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+/* Clean glass effect */
+.glass-effect {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Modern spacing and typography */
+.section-padding {
+  padding: 4rem 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 6rem 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 8rem 3rem;
+  }
+}
+
+/* Improved focus states */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-white;
+}
+
+/* Clean shadows */
+.shadow-clean {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.shadow-clean-lg {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.shadow-clean-xl {
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.1);
 }
