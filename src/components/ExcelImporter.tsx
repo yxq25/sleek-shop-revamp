@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -102,6 +101,15 @@ export const ExcelImporter = ({ collections, onImportProducts, onAddCollection, 
     };
   };
 
+  const isValidUrl = (string: string): boolean => {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  };
+
   const validateAndProcessProduct = (row: any, index: number, availableCollections: Collection[]): { 
     product: Omit<Product, 'id'> | null; 
     errors: string[]; 
@@ -149,16 +157,27 @@ export const ExcelImporter = ({ collections, onImportProducts, onAddCollection, 
       }
     }
 
-    // Procesar imagen
+    // Procesar imagen - Mejorada la validación de URL
     let imageUrl = '';
-    if (row['Imagen URL'] && typeof row['Imagen URL'] === 'string') {
-      const url = row['Imagen URL'].trim();
-      if (url !== '') {
-        try {
-          new URL(url);
-          imageUrl = url;
-        } catch {
-          warnings.push(`Fila ${index + 2}: URL de imagen inválida, se ignorará`);
+    if (row['Imagen URL']) {
+      const rawUrl = String(row['Imagen URL']).trim();
+      console.log(`Procesando URL de imagen para ${name}:`, rawUrl);
+      
+      if (rawUrl !== '' && rawUrl !== 'undefined' && rawUrl !== 'null') {
+        // Verificar si es una URL válida
+        if (isValidUrl(rawUrl)) {
+          imageUrl = rawUrl;
+          console.log(`URL válida asignada para ${name}:`, imageUrl);
+        } else {
+          // Intentar agregar https:// si no tiene protocolo
+          const urlWithProtocol = rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`;
+          if (isValidUrl(urlWithProtocol)) {
+            imageUrl = urlWithProtocol;
+            console.log(`URL con protocolo asignada para ${name}:`, imageUrl);
+          } else {
+            warnings.push(`Fila ${index + 2}: URL de imagen inválida "${rawUrl}", se ignorará`);
+            console.log(`URL inválida para ${name}:`, rawUrl);
+          }
         }
       }
     }
@@ -181,6 +200,8 @@ export const ExcelImporter = ({ collections, onImportProducts, onAddCollection, 
       visible,
       stock: Math.max(0, stock)
     };
+
+    console.log(`Producto procesado: ${name}, imagen: "${imageUrl}"`);
 
     return { product, errors, warnings, newCollection };
   };
@@ -241,6 +262,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onAddCollection, 
           // Luego importar los productos
           if (validProducts.length > 0) {
             onImportProducts(validProducts);
+            console.log('Productos importados con URLs de imagen:', validProducts.map(p => ({ name: p.name, image: p.image })));
           }
 
           setImportResult({
@@ -475,6 +497,7 @@ export const ExcelImporter = ({ collections, onImportProducts, onAddCollection, 
                 <li>Las colecciones que no existan se crearán automáticamente</li>
                 <li>Los productos se actualizarán en tiempo real en la tienda</li>
                 <li>Usa la plantilla para ver el formato correcto</li>
+                <li><strong>Las URLs de imagen deben ser válidas y accesibles</strong></li>
               </ul>
             </AlertDescription>
           </Alert>

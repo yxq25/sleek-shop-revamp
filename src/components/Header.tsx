@@ -1,7 +1,8 @@
 
 import { Button } from '@/components/ui/button';
-import { UserCog, Menu, Search } from 'lucide-react';
+import { UserCog, Menu, Search, MoreVertical } from 'lucide-react';
 import { Logo } from '@/components/Logo';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface HeaderProps {
   storeName: string;
@@ -13,18 +14,6 @@ interface HeaderProps {
 export const Header = ({ storeName, storeDescription, onAdminToggle, isAdminMode }: HeaderProps) => {
   return (
     <div className="google-font">
-      {/* Admin button - solo visible cuando NO está en modo admin */}
-      {!isAdminMode && (
-        <Button
-          onClick={onAdminToggle}
-          className="fixed bottom-4 right-4 z-50 btn-google-secondary shadow-lg"
-          size="sm"
-        >
-          <UserCog className="w-4 h-4 mr-2" />
-          Admin
-        </Button>
-      )}
-      
       {/* Google-style header */}
       <div className="google-header">
         <div className="google-container">
@@ -50,8 +39,22 @@ export const Header = ({ storeName, storeDescription, onAdminToggle, isAdminMode
               </a>
             </div>
 
-            {/* Iconos de acción */}
+            {/* Menú de tres puntos */}
             <div className="flex items-center space-x-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="p-2">
+                    <MoreVertical className="w-5 h-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="bg-white border border-gray-200 shadow-lg">
+                  <DropdownMenuItem onClick={onAdminToggle} className="flex items-center gap-2 cursor-pointer">
+                    <UserCog className="w-4 h-4" />
+                    {isAdminMode ? 'Salir de Admin' : 'Administrador'}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <Button variant="ghost" size="sm" className="md:hidden">
                 <Menu className="w-5 h-5" />
               </Button>
