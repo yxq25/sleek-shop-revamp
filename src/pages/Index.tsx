@@ -112,7 +112,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white google-font">
       <Header 
         storeName={store.storeConfig.name}
         storeDescription={store.storeConfig.description}
@@ -136,9 +136,9 @@ const Index = () => {
         onLogin={auth.login}
       />
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className="lg:w-80 space-y-6">
+      <div className="google-container py-8">
+        <div className="flex flex-col xl:flex-row gap-8">
+          <div className="xl:w-80 space-y-6">
             <Cart
               cart={cart.cart}
               total={cart.getTotal()}
@@ -178,7 +178,8 @@ const Index = () => {
               products={store.products}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {/* Grid de productos estilo Google */}
+            <div id="productos" className="google-grid">
               {filteredProducts.length === 0 ? (
                 <div className="col-span-full text-center py-16">
                   <div className="text-6xl mb-4">🔍</div>

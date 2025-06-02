@@ -1,6 +1,6 @@
 
 import { Button } from '@/components/ui/button';
-import { UserCog } from 'lucide-react';
+import { UserCog, Menu, Search } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 interface HeaderProps {
@@ -12,34 +12,81 @@ interface HeaderProps {
 
 export const Header = ({ storeName, storeDescription, onAdminToggle, isAdminMode }: HeaderProps) => {
   return (
-    <div className="relative">
-      {/* Solo mostrar botón de admin si NO está en modo admin */}
+    <div className="google-font">
+      {/* Admin button - solo visible cuando NO está en modo admin */}
       {!isAdminMode && (
         <Button
           onClick={onAdminToggle}
-          className="fixed bottom-4 right-4 z-50 btn-secondary shadow-xl"
+          className="fixed bottom-4 right-4 z-50 btn-google-secondary shadow-lg"
           size="sm"
         >
           <UserCog className="w-4 h-4 mr-2" />
-          Administrador
+          Admin
         </Button>
       )}
       
-      <div className="bg-gradient-to-br from-yellow-50 via-orange-50 to-amber-100 py-20">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col items-center text-center space-y-8">
-            {/* Logo centrado con marco circular */}
-            <Logo size="xl" />
+      {/* Google-style header */}
+      <div className="google-header">
+        <div className="google-container">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo y nombre */}
+            <div className="flex items-center space-x-4">
+              <Logo size="sm" />
+              <div className="hidden md:block">
+                <h1 className="text-xl font-medium text-gray-900">{storeName}</h1>
+              </div>
+            </div>
             
-            {/* Título centrado */}
-            <div className="space-y-4">
-              <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-orange-600 via-yellow-600 to-amber-600 bg-clip-text text-transparent leading-tight">
-                {storeName}
-              </h1>
-              <div className="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 mx-auto rounded-full"></div>
-              <p className="text-xl md:text-2xl text-gray-700 max-w-3xl mx-auto font-medium">
-                {storeDescription}
-              </p>
+            {/* Navegación central */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#productos" className="text-gray-700 hover:text-google-blue transition-colors">
+                Productos
+              </a>
+              <a href="#colecciones" className="text-gray-700 hover:text-google-blue transition-colors">
+                Colecciones
+              </a>
+              <a href="#contacto" className="text-gray-700 hover:text-google-blue transition-colors">
+                Contacto
+              </a>
+            </div>
+
+            {/* Iconos de acción */}
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="sm" className="md:hidden">
+                <Menu className="w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero section inspirado en Google */}
+      <div className="bg-gradient-to-b from-blue-50 to-white">
+        <div className="google-section text-center">
+          <div className="max-w-4xl mx-auto">
+            {/* Logo grande centrado */}
+            <div className="mb-8">
+              <Logo size="xl" className="mx-auto animate-gentle-scale" />
+            </div>
+            
+            {/* Título principal */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gray-900 mb-6 text-balance">
+              {storeName}
+            </h1>
+            
+            {/* Descripción */}
+            <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-3xl mx-auto text-balance">
+              {storeDescription}
+            </p>
+            
+            {/* CTA buttons estilo Google */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Button className="btn-google-primary">
+                Ver Productos
+              </Button>
+              <Button className="btn-google-secondary">
+                Explorar Colecciones
+              </Button>
             </div>
           </div>
         </div>
