@@ -65,38 +65,38 @@ export const Cart = ({ cart, total, onRemoveItem, onCheckout, storeConfig }: Car
   };
 
   return (
-    <Card id="cart-section" className="w-full max-w-sm bg-white/95 backdrop-blur-sm shadow-xl border-2 border-yellow-300">
-      <CardHeader className="pb-3">
+    <Card id="cart-section" className="w-full max-w-sm bg-white/95 backdrop-blur-sm shadow-xl border-2 border-yellow-200">
+      <CardHeader className="pb-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-t-lg">
         <CardTitle className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-yellow-600" />
-            <span className="text-gray-800">Mi Carrito</span>
+            <ShoppingCart className="w-5 h-5 text-orange-600" />
+            <span className="text-gray-800 font-bold">Mi Carrito</span>
           </div>
-          <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+          <Badge className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-800 border-0">
             {cart.length}
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="max-h-64 overflow-y-auto space-y-2">
+      <CardContent className="space-y-4 p-6">
+        <div className="max-h-64 overflow-y-auto space-y-3">
           {cart.length === 0 ? (
             <div className="text-center py-8">
-              <div className="text-4xl mb-2">🛒</div>
-              <p className="text-gray-500">Tu carrito está vacío</p>
+              <div className="text-4xl mb-3">🛒</div>
+              <p className="text-gray-500 font-medium">Tu carrito está vacío</p>
               <p className="text-sm text-gray-400">¡Agrega algunos juguetes increíbles!</p>
             </div>
           ) : (
             cart.map((item, index) => (
-              <div key={index} className="flex items-center justify-between p-2 bg-yellow-50 rounded-lg border border-yellow-200">
+              <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200 shadow-sm">
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">{item.name}</p>
-                  <p className="text-yellow-700 font-bold">${item.price.toFixed(2)}</p>
+                  <p className="font-medium text-sm truncate text-gray-800">{item.name}</p>
+                  <p className="text-orange-700 font-bold">${item.price.toFixed(2)}</p>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => onRemoveItem(index)}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-full h-8 w-8 p-0"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -106,13 +106,13 @@ export const Cart = ({ cart, total, onRemoveItem, onCheckout, storeConfig }: Car
         </div>
         
         <div className="border-t border-yellow-200 pt-4">
-          <div className="text-center mb-4">
+          <div className="text-center mb-4 p-3 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg">
             <p className="text-lg font-bold text-gray-800">Total: ${total.toFixed(2)}</p>
           </div>
           <Button
             onClick={checkout}
             disabled={cart.length === 0}
-            className="w-full bg-green-600 hover:bg-green-700"
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 hover:shadow-lg"
           >
             <MessageSquare className="w-4 h-4 mr-2" />
             Comprar por WhatsApp

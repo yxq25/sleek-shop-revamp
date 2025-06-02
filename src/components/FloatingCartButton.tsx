@@ -21,7 +21,7 @@ export const FloatingCartButton = ({ cart, onClick }: FloatingCartButtonProps) =
   return (
     <Button
       onClick={scrollToCart}
-      className="fixed top-20 right-4 z-50 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-black shadow-2xl h-14 w-14 rounded-full p-0 transition-all duration-300 hover:scale-110 border-2 border-yellow-300"
+      className="fixed top-20 right-4 z-50 btn-primary shadow-2xl h-14 w-14 rounded-full p-0 transition-all duration-300 hover:scale-110 border-2 border-yellow-300 animate-bounce-gentle"
       size="icon"
     >
       <div className="relative">

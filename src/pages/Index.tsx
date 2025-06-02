@@ -108,12 +108,11 @@ const Index = () => {
   };
 
   const handleCartButtonClick = () => {
-    // Función para el botón flotante del carrito
     console.log('Cart button clicked');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-brand">
       <Header 
         storeName={store.storeConfig.name}
         storeDescription={store.storeConfig.description}

@@ -44,9 +44,15 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
 
-    /* Custom colors inspired by the logo */
+    /* Custom colors inspired by the logo - Yellow/Orange as primary */
     --yellow-brand: 45 93% 66%;
-    --yellow-brand-dark: 45 93% 56%;
+    --yellow-brand-dark: 39 100% 56%;
+    --orange-brand: 33 100% 60%;
+    --orange-brand-dark: 29 100% 50%;
+    
+    /* Purple/Blue as secondary/accent colors */
+    --purple-accent: 260 64% 65%;
+    --blue-accent: 220 91% 65%;
   }
 
   .dark {
@@ -112,12 +118,25 @@
   animation: bounce-gentle 2s infinite;
 }
 
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(251, 191, 36, 0.6);
+  }
+}
+
+.animate-glow {
+  animation: glow 3s ease-in-out infinite;
+}
+
 /* Smooth scroll behavior */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom yellow colors matching the logo */
+/* Custom brand colors matching the logo */
 .bg-yellow-brand {
   background-color: hsl(var(--yellow-brand));
 }
@@ -126,6 +145,92 @@ html {
   background-color: hsl(var(--yellow-brand-dark));
 }
 
+.bg-orange-brand {
+  background-color: hsl(var(--orange-brand));
+}
+
+.bg-orange-brand-dark {
+  background-color: hsl(var(--orange-brand-dark));
+}
+
 .text-yellow-brand {
   color: hsl(var(--yellow-brand-dark));
+}
+
+.text-orange-brand {
+  color: hsl(var(--orange-brand-dark));
+}
+
+.border-yellow-brand {
+  border-color: hsl(var(--yellow-brand));
+}
+
+/* Logo circular frame styling */
+.logo-frame {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, hsl(var(--yellow-brand)), hsl(var(--orange-brand)));
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.3);
+  transition: all 0.3s ease;
+}
+
+.logo-frame:hover {
+  transform: scale(1.05);
+  box-shadow: 0 15px 40px rgba(251, 191, 36, 0.4);
+}
+
+.logo-frame img {
+  border-radius: 50%;
+  background: white;
+  padding: 4px;
+}
+
+/* Primary button styling with brand colors */
+.btn-primary {
+  background: linear-gradient(135deg, hsl(var(--yellow-brand)), hsl(var(--orange-brand)));
+  color: #1f2937;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, hsl(var(--yellow-brand-dark)), hsl(var(--orange-brand-dark)));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(251, 191, 36, 0.3);
+}
+
+/* Secondary button styling */
+.btn-secondary {
+  background: linear-gradient(135deg, hsl(var(--purple-accent)), hsl(var(--blue-accent)));
+  color: white;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Clean gradients for backgrounds */
+.bg-gradient-brand {
+  background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 50%, #fde68a 100%);
+}
+
+.bg-gradient-secondary {
+  background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #ddd6fe 100%);
 }

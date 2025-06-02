@@ -35,27 +35,27 @@ export const ProductFilters = ({
   const uniqueSkills = [...new Set(products.flatMap(p => p.skills))];
 
   return (
-    <Card className="bg-white/95 backdrop-blur-sm shadow-lg">
+    <Card className="bg-white/95 backdrop-blur-sm shadow-lg border-yellow-200 border-2">
       <CardContent className="p-6">
         <div className="space-y-6">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-orange-500 w-5 h-5" />
             <Input
               placeholder="🔍 Buscar productos por nombre..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-12 border-yellow-300 focus:border-orange-400 focus:ring-orange-200 h-12 text-base"
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
-              <Label>Colección</Label>
+              <Label className="text-gray-700 font-semibold">Colección</Label>
               <Select value={collectionFilter} onValueChange={setCollectionFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-yellow-300 focus:border-orange-400">
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-yellow-200">
                   <SelectItem value="all">Todas</SelectItem>
                   {collections.map(collection => (
                     <SelectItem key={collection.id} value={collection.name}>
@@ -67,12 +67,12 @@ export const ProductFilters = ({
             </div>
             
             <div className="space-y-2">
-              <Label>Edad</Label>
+              <Label className="text-gray-700 font-semibold">Edad</Label>
               <Select value={ageFilter} onValueChange={setAgeFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-yellow-300 focus:border-orange-400">
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-yellow-200">
                   <SelectItem value="all">Todas</SelectItem>
                   {uniqueAges.map(age => (
                     <SelectItem key={age} value={age}>
@@ -84,12 +84,12 @@ export const ProductFilters = ({
             </div>
             
             <div className="space-y-2">
-              <Label>Habilidad</Label>
+              <Label className="text-gray-700 font-semibold">Habilidad</Label>
               <Select value={skillFilter} onValueChange={setSkillFilter}>
-                <SelectTrigger>
+                <SelectTrigger className="border-yellow-300 focus:border-orange-400">
                   <SelectValue placeholder="Todas" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white border-yellow-200">
                   <SelectItem value="all">Todas</SelectItem>
                   {uniqueSkills.map(skill => (
                     <SelectItem key={skill} value={skill}>
